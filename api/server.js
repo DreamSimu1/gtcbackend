@@ -27,6 +27,7 @@ const corsOptions = {
     "http://localhost:3001",
     "http://localhost:3000",
     "http://localhost:5173",
+    "https://gtclagos.edupro.com.ng",
   ], // specify your client's URL
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-API-Key", "X-Api-Key"],
