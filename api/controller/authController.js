@@ -162,6 +162,39 @@ const registerUser = async (req, res) => {
   }
 };
 
+// controllers/userController.js
+
+const allowedRoles = [
+  "student",
+  "teacher",
+  "parent",
+  "admin",
+  "principal",
+  "vice_principal",
+  "head_of_department",
+];
+
+// GET /api/users/:role/:sessionId
+const getUsersByRoleAndSession = async (req, res) => {
+  try {
+    const { role, sessionId } = req.params;
+
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({ error: "Invalid role provided." });
+    }
+
+    const users = await User.find({
+      role,
+      session: { $in: [sessionId] },
+    });
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error in getUsersByRoleAndSession:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+};
+
 // const getAllHODs = async (req, res) => {
 //   try {
 //     const hods = await User.find({ role: "head_of_department" }).select(
@@ -1092,6 +1125,7 @@ module.exports = {
   updateUserProfile,
   forgotPassword,
   addSessionToUsersWithoutSession,
+  getUsersByRoleAndSession,
   changePassword,
   getAllHODs,
 };

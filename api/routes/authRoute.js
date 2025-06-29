@@ -10,6 +10,7 @@ const {
   sendVerificationCode,
   deleteAccount,
   registerUsersBulk,
+  getUsersByRoleAndSession,
   verifyEmail,
   resendEmailVerirficationCode,
   addSessionToUsersWithoutSession,
@@ -45,6 +46,8 @@ router.get(
     session: false,
   })
 );
+
+router.get("/users/:role/:sessionId", getUsersByRoleAndSession);
 
 // Callback route for Google to redirect to
 // router.get(
