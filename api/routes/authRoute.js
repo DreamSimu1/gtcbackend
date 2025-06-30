@@ -12,6 +12,7 @@ const {
   deleteAccount,
   registerUsersBulk,
   getUsersByRoleAndSession,
+  getAllVice,
   verifyEmail,
   resendEmailVerirficationCode,
   getStudentDetailsWithSession,
@@ -40,6 +41,7 @@ router.post(
 );
 // routes/userRoutes.js
 router.get("/hods", getAllHODs);
+router.get("/vice", getAllVice);
 
 router.get(
   "/google",

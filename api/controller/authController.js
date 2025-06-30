@@ -318,7 +318,33 @@ const getAllHODs = async (req, res) => {
     });
   }
 };
+const getAllVice = async (req, res) => {
+  try {
+    const sessionId = req.query.session;
 
+    if (!sessionId || !mongoose.Types.ObjectId.isValid(sessionId)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Valid session ID is required.",
+        data: null,
+      });
+    }
+
+    const hods = await User.find({
+      role: "vice_principal",
+      session: mongoose.Types.ObjectId(sessionId),
+    }).select("_id fullname username email phone");
+
+    res.status(200).json(hods);
+  } catch (error) {
+    console.error("Error fetching Vice", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to fetch Vice.",
+      data: error.message || error,
+    });
+  }
+};
 const addSessionToUsersWithoutSession = async (req, res) => {
   try {
     const { sessionId } = req.body;
@@ -1203,6 +1229,7 @@ module.exports = {
   verifyEmail,
   resendEmailVerirficationCode,
   getProfileByUserId,
+  getAllVice,
   updateUserProfile,
   forgotPassword,
   addSessionToUsersWithoutSession,
