@@ -8,6 +8,7 @@ const {
   changePassword,
   verifyPhone,
   sendVerificationCode,
+  getStudentById,
   deleteAccount,
   registerUsersBulk,
   getUsersByRoleAndSession,
@@ -46,7 +47,7 @@ router.get(
     session: false,
   })
 );
-
+router.get("/student/:studentId", getStudentById);
 router.get("/users/:role/:sessionId", getUsersByRoleAndSession);
 
 // Callback route for Google to redirect to
