@@ -14,6 +14,7 @@ const {
   getUsersByRoleAndSession,
   verifyEmail,
   resendEmailVerirficationCode,
+  getStudentDetailsWithSession,
   addSessionToUsersWithoutSession,
   forgotPassword,
   getProfileByUserId,
@@ -48,6 +49,8 @@ router.get(
   })
 );
 router.get("/student/:studentId", getStudentById);
+router.get("/student/:studentId/:sessionId", getStudentDetailsWithSession);
+
 router.get("/users/:role/:sessionId", getUsersByRoleAndSession);
 
 // Callback route for Google to redirect to

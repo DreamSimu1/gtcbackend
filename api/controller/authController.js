@@ -202,6 +202,46 @@ const getStudentById = async (req, res) => {
   }
 };
 
+const getStudentDetailsWithSession = async (req, res) => {
+  try {
+    const { studentId, sessionId } = req.params;
+
+    if (!studentId || !sessionId) {
+      return res.status(400).json({
+        status: "error",
+        message: "Student ID and Session ID are required.",
+      });
+    }
+
+    const student = await User.findOne({
+      _id: studentId,
+      role: "student",
+    })
+      .populate("tradeSection", "name") // populate only the name field
+      .select("-password -refreshToken");
+
+    if (!student) {
+      return res.status(404).json({
+        status: "error",
+        message: "Student not found.",
+        data: null,
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Student retrieved successfully.",
+      data: student,
+    });
+  } catch (error) {
+    console.error("Error fetching student by ID:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to retrieve student.",
+      data: error.message || error,
+    });
+  }
+};
 // controllers/userController.js
 
 const allowedRoles = [
@@ -1166,6 +1206,7 @@ module.exports = {
   updateUserProfile,
   forgotPassword,
   addSessionToUsersWithoutSession,
+  getStudentDetailsWithSession,
   getUsersByRoleAndSession,
   changePassword,
   getAllHODs,
