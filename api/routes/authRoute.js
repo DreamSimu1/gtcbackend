@@ -14,6 +14,7 @@ const {
   getUsersByRoleAndSession,
   getAllVice,
   verifyEmail,
+  getAllTeachers,
   resendEmailVerirficationCode,
   getStudentDetailsWithSession,
   addSessionToUsersWithoutSession,
@@ -42,6 +43,7 @@ router.post(
 // routes/userRoutes.js
 router.get("/hods", getAllHODs);
 router.get("/vice", getAllVice);
+router.get("/get-teachers/:sessionId", getAllTeachers);
 
 router.get(
   "/google",

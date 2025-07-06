@@ -13,6 +13,7 @@ const {
   getScores,
   saveMark,
   updateMark,
+  getBroadsheet,
   updateMarks,
 } = require("../controller/offMarkController");
 
@@ -28,6 +29,7 @@ router.get("/get-scores-by-student/:studentId/:sessionId", getMarkbyStudent);
 router.get("/get-scored-by-student/:studentId", getMarkbyStudentwithoutsession);
 router.post("/add-session-to-marks", addSessionToMarks);
 router.get("/get-exams/:sessionId", getExam);
+router.get("/get-broadsheet/:examId/:sectionId/:tech", getBroadsheet);
 
 router.get("/get-all-scores/:examId/:subjectId", getScores);
 

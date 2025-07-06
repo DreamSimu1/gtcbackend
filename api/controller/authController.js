@@ -318,6 +318,34 @@ const getAllHODs = async (req, res) => {
     });
   }
 };
+
+const getAllTeachers = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+
+    if (!sessionId || !mongoose.Types.ObjectId.isValid(sessionId)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Valid session ID is required.",
+        data: null,
+      });
+    }
+
+    const teachers = await User.find({
+      role: "teacher",
+      session: mongoose.Types.ObjectId(sessionId),
+    }).select("_id fullname username email phone");
+
+    res.status(200).json(teachers);
+  } catch (error) {
+    console.error("Error fetching teachers:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to fetch teachers.",
+      data: error.message || error,
+    });
+  }
+};
 const getAllVice = async (req, res) => {
   try {
     const sessionId = req.query.session;
@@ -1235,6 +1263,7 @@ module.exports = {
   addSessionToUsersWithoutSession,
   getStudentDetailsWithSession,
   getUsersByRoleAndSession,
+  getAllTeachers,
   changePassword,
   getAllHODs,
 };

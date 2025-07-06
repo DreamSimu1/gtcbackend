@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Mark = require("../models/Mark");
 const Exam = require("../models/Exam");
+const Subject = require("../models/Subject");
 const Session = require("../models/Session");
 
 const saveMark = async (req, res) => {
@@ -135,6 +136,102 @@ const getMarkbyStudent = async (req, res) => {
     res.status(200).json({ studentId, sessionId, scores: uniqueScores });
   } catch (error) {
     console.error("Error fetching marks for student:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// const getBroadsheet = async (req, res) => {
+//   const { examId, sectionId, tech } = req.params;
+
+//   if (
+//     !mongoose.Types.ObjectId.isValid(examId) ||
+//     !mongoose.Types.ObjectId.isValid(sectionId)
+//   ) {
+//     return res.status(400).json({ message: "Invalid exam or section ID" });
+//   }
+
+//   try {
+//     // Step 1: Get all subjects for this section and tech
+//     const subjects = await Subject.find({
+//       tradeSection: sectionId,
+//       classname: tech,
+//     });
+
+//     const subjectIds = subjects.map((s) => s._id);
+
+//     // Step 2: Get all marks for the selected exam and relevant subjects
+//     const marks = await Mark.find({
+//       examId: examId,
+//       subjectId: { $in: subjectIds },
+//     });
+
+//     const scores = {}; // scores[studentId][subjectId] = { test, exam, total }
+
+//     marks.forEach((markDoc) => {
+//       const subjectId = markDoc.subjectId.toString();
+//       markDoc.marks.forEach((entry) => {
+//         const studentId = entry.studentId.toString();
+
+//         if (!scores[studentId]) scores[studentId] = {};
+
+//         scores[studentId][subjectId] = {
+//           test: entry.testscore || 0,
+//           exam: entry.examscore || 0,
+//           total: (entry.testscore || 0) + (entry.examscore || 0),
+//         };
+//       });
+//     });
+
+//     return res.status(200).json({ scores });
+//   } catch (err) {
+//     console.error("Error fetching broadsheet:", err);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+const getBroadsheet = async (req, res) => {
+  const { examId, sectionId, tech } = req.params;
+
+  if (
+    !mongoose.Types.ObjectId.isValid(examId) ||
+    !mongoose.Types.ObjectId.isValid(sectionId)
+  ) {
+    return res.status(400).json({ message: "Invalid exam or section ID" });
+  }
+
+  try {
+    // 1. Get all relevant subjects
+    const subjects = await Subject.find({
+      tradeSection: sectionId,
+      classname: tech,
+    });
+
+    const subjectIds = subjects.map((s) => s._id.toString());
+
+    // 2. Fetch all mark documents for the exam
+    const markDocs = await Mark.find({ examId });
+
+    const scores = {}; // scores[studentId][subjectId] = { test, exam, total }
+
+    markDocs.forEach((doc) => {
+      doc.marks.forEach((entry) => {
+        const studentId = entry.studentId.toString();
+        const subjectId = entry.subjectId?.toString(); // Ensure subjectId exists
+
+        if (!subjectId || !subjectIds.includes(subjectId)) return;
+
+        if (!scores[studentId]) scores[studentId] = {};
+
+        scores[studentId][subjectId] = {
+          test: entry.testscore || 0,
+          exam: entry.examscore || 0,
+          total: (entry.testscore || 0) + (entry.examscore || 0),
+        };
+      });
+    });
+
+    return res.status(200).json({ scores });
+  } catch (err) {
+    console.error("Error fetching broadsheet:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -379,4 +476,5 @@ module.exports = {
   updateMark,
   addSessionToMarks,
   updateMarks,
+  getBroadsheet,
 };
