@@ -12,7 +12,8 @@ const {
   getMarkbyStudentwithoutsession,
   getScores,
   saveMark,
-  updateMark,
+  saveOrUpdateMarks,
+
   getBroadsheet,
   updateMarks,
 } = require("../controller/offMarkController");
@@ -22,6 +23,7 @@ const router = express.Router();
 // CREATE routes
 router.post("/create-exam", submitExam);
 router.post("/addSessionToExamWithoutSession", addSessionToExamWithoutSession);
+// router.post("/save-marks/:sessionId", saveMark);
 router.post("/save-marks/:sessionId", saveMark);
 router.get("/get-scores/:examName/:sessionId", getMark);
 
@@ -34,7 +36,7 @@ router.get("/get-broadsheet/:examId/:sectionId/:tech", getBroadsheet);
 router.get("/get-all-scores/:examId/:subjectId", getScores);
 
 router.put("/update-all-marks", updateMarks);
-router.put("/update-marks/:studentId", updateMark);
+// router.put("/update-marks/:studentId", updateMarks);
 router.delete("/deleteexam/:examId", deleteExam);
 
 module.exports = router;
