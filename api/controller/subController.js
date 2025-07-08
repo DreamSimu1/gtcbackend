@@ -4,54 +4,117 @@ const User = require("../models/User");
 const Session = require("../models/Session");
 const mongoose = require("mongoose");
 
+// const createSubject = async (req, res) => {
+//   const { name, teacherUsername, classname, tradeSectionId } = req.body;
+//   const { sessionId } = req.params;
+
+//   console.log("Received form data:", req.body);
+//   console.log("Received session from params:", sessionId);
+
+//   try {
+//     // Find teacher by username
+//     const teacher = await User.findOne({
+//       username: teacherUsername,
+//       role: "teacher",
+//     });
+
+//     if (!teacher) {
+//       return res.status(404).json({ error: "Teacher not found" });
+//     }
+
+//     if (!["tech_1", "tech_2", "tech_3"].includes(classname)) {
+//       return res.status(400).json({
+//         error: "Invalid classname. Must be tech_1, tech_2, or tech_3",
+//       });
+//     }
+
+//     if (!mongoose.Types.ObjectId.isValid(tradeSectionId)) {
+//       return res.status(400).json({ error: "Invalid trade section ID" });
+//     }
+
+//     if (!mongoose.Types.ObjectId.isValid(sessionId)) {
+//       return res.status(400).json({ error: "Invalid session ID" });
+//     }
+
+//     // Create subject
+//     const newSubject = new Subject({
+//       name,
+//       teacher: teacher._id,
+//       classname,
+//       tradeSection: tradeSectionId,
+//       session: sessionId,
+//     });
+
+//     const savedSubject = await newSubject.save();
+//     res.status(201).json(savedSubject);
+//   } catch (err) {
+//     console.error("Error creating subject:", err);
+//     res.status(500).json({ error: "Failed to create subject" });
+//   }
+// };
+
 const createSubject = async (req, res) => {
-  const { name, teacherUsername, classname, tradeSectionId } = req.body;
+  const subjects = Array.isArray(req.body) ? req.body : [req.body];
   const { sessionId } = req.params;
 
-  console.log("Received form data:", req.body);
   console.log("Received session from params:", sessionId);
+  console.log("Received form data:", subjects);
 
   try {
-    // Find teacher by username
-    const teacher = await User.findOne({
-      username: teacherUsername,
-      role: "teacher",
-    });
-
-    if (!teacher) {
-      return res.status(404).json({ error: "Teacher not found" });
-    }
-
-    if (!["tech_1", "tech_2", "tech_3"].includes(classname)) {
-      return res.status(400).json({
-        error: "Invalid classname. Must be tech_1, tech_2, or tech_3",
-      });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(tradeSectionId)) {
-      return res.status(400).json({ error: "Invalid trade section ID" });
-    }
-
     if (!mongoose.Types.ObjectId.isValid(sessionId)) {
       return res.status(400).json({ error: "Invalid session ID" });
     }
 
-    // Create subject
-    const newSubject = new Subject({
-      name,
-      teacher: teacher._id,
-      classname,
-      tradeSection: tradeSectionId,
-      session: sessionId,
-    });
+    const createdSubjects = [];
 
-    const savedSubject = await newSubject.save();
-    res.status(201).json(savedSubject);
+    for (const subject of subjects) {
+      const { name, teacherUsername, classname, tradeSectionId } = subject;
+
+      if (!["tech_1", "tech_2", "tech_3"].includes(classname)) {
+        return res.status(400).json({
+          error: `Invalid classname '${classname}' in subject: ${name}`,
+        });
+      }
+
+      if (!mongoose.Types.ObjectId.isValid(tradeSectionId)) {
+        return res.status(400).json({
+          error: `Invalid trade section ID in subject: ${name}`,
+        });
+      }
+
+      const teacher = await User.findOne({
+        username: new RegExp("^" + teacherUsername.trim() + "$", "i"),
+        role: "teacher",
+      });
+
+      if (!teacher) {
+        return res.status(404).json({
+          error: `Teacher '${teacherUsername}' not found for subject: ${name}`,
+        });
+      }
+
+      const newSubject = new Subject({
+        name,
+        teacher: teacher._id,
+        classname,
+        tradeSection: tradeSectionId,
+        session: sessionId,
+      });
+
+      const saved = await newSubject.save();
+      createdSubjects.push(saved);
+    }
+
+    res.status(201).json({
+      message: "Subjects created successfully",
+      data: createdSubjects,
+    });
   } catch (err) {
-    console.error("Error creating subject:", err);
-    res.status(500).json({ error: "Failed to create subject" });
+    console.error("Error creating subjects:", err);
+    res.status(500).json({ error: "Failed to create subjects" });
   }
 };
+
 const getSubjectsByTradeSection = async (req, res) => {
   const { tradeSectionId, sessionId } = req.params;
 
