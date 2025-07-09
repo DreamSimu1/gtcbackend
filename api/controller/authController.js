@@ -683,6 +683,34 @@ const getProfileByUserId = async (req, res) => {
   }
 };
 
+// GET /api/auth/profile (uses JWT token to identify user)
+const getAuthenticatedUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // from verify middleware
+
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Profile fetched successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.error("❌ Error fetching authenticated user profile:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to fetch user profile",
+    });
+  }
+};
+
 // // handles user login
 // const login = async (req, res) => {
 //   const { email, phone, password } = req.body;
@@ -1300,4 +1328,5 @@ module.exports = {
   changePassword,
   getAllHODs,
   deleteUser,
+  getAuthenticatedUserProfile,
 };

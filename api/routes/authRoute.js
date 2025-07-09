@@ -15,6 +15,7 @@ const {
   getAllVice,
   verifyEmail,
   getAllTeachers,
+  getAuthenticatedUserProfile,
   resendEmailVerirficationCode,
   getStudentDetailsWithSession,
   addSessionToUsersWithoutSession,
@@ -32,6 +33,8 @@ router.post("/register", registerUser);
 router.post("/register/bulk", registerUsersBulk); // ✅ new
 router.post("/login", login);
 router.get("/profile/:id", verify, getProfileByUserId);
+router.get("/profile", verify, getAuthenticatedUserProfile);
+
 router.get("/get/refreshtoken", refreshToken);
 router.get("/get/refreshtokenweb", refreshTokenWeb);
 router.put("/reset/password/:id", changePassword);
