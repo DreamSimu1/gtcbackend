@@ -75,7 +75,39 @@ const getAllSections = async (req, res) => {
     });
   }
 };
+const deleteSection = async (req, res) => {
+  try {
+    const { sectionId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(sectionId)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid section ID.",
+      });
+    }
+
+    const section = await Section.findByIdAndDelete(sectionId);
+
+    if (!section) {
+      return res.status(404).json({
+        status: "error",
+        message: "Section not found.",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Section deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Error deleting section:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to delete section.",
+      data: error.message || error,
+    });
+  }
+};
 // Get all teachers in a section
 // const getTeachersBySection = async (req, res) => {
 //   try {
@@ -263,4 +295,5 @@ module.exports = {
   getTeachersBySection,
   getStudentsBySection,
   getStudentsByTech,
+  deleteSection,
 };

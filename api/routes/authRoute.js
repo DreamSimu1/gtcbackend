@@ -20,6 +20,7 @@ const {
   addSessionToUsersWithoutSession,
   forgotPassword,
   getProfileByUserId,
+  deleteUser,
   getAllHODs,
   updateUserProfile,
 } = require("../controller/authController");
@@ -101,5 +102,6 @@ router.get(
 router.put("/profile/:id", updateUserProfile);
 
 router.delete("/delete-account", verify, deleteAccount);
+router.delete("/user/:id", deleteUser);
 
 module.exports = router;

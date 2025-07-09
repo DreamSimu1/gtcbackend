@@ -114,6 +114,54 @@ const createSubject = async (req, res) => {
     res.status(500).json({ error: "Failed to create subjects" });
   }
 };
+// controller/subController.js
+const updateSubject = async (req, res) => {
+  try {
+    const { subjectId } = req.params;
+    const { name, teacherUsername, classname, tradeSectionId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(subjectId)) {
+      return res.status(400).json({ error: "Invalid subject ID" });
+    }
+
+    const subject = await Subject.findById(subjectId);
+    if (!subject) {
+      return res.status(404).json({ error: "Subject not found" });
+    }
+
+    if (teacherUsername) {
+      const teacher = await User.findOne({
+        username: new RegExp("^" + teacherUsername.trim() + "$", "i"),
+        role: "teacher",
+      });
+
+      if (!teacher) {
+        return res.status(404).json({ error: "Teacher not found" });
+      }
+
+      subject.teacher = teacher._id;
+    }
+
+    if (name) subject.name = name;
+    if (classname) subject.classname = classname;
+    if (tradeSectionId) {
+      if (!mongoose.Types.ObjectId.isValid(tradeSectionId)) {
+        return res.status(400).json({ error: "Invalid trade section ID" });
+      }
+      subject.tradeSection = tradeSectionId;
+    }
+
+    await subject.save();
+
+    res.status(200).json({
+      message: "Subject updated successfully",
+      data: subject,
+    });
+  } catch (err) {
+    console.error("Error updating subject:", err);
+    res.status(500).json({ error: "Failed to update subject" });
+  }
+};
 
 const getSubjectsByTradeSection = async (req, res) => {
   const { tradeSectionId, sessionId } = req.params;
@@ -262,7 +310,7 @@ module.exports = {
   createSubject,
   getSubjectsByTradeSection,
   // addSessionToSubjectWithoutSession,
-  // updateSubject,
+  updateSubject,
   // getallSubject,
   // getSubjectsByClass,
   // getStudentSubjects,

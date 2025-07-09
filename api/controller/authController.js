@@ -201,6 +201,39 @@ const getStudentById = async (req, res) => {
     });
   }
 };
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        status: "error",
+        message: "User ID is required.",
+      });
+    }
+
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found.",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      message: `User (${user.fullname}) deleted successfully.`,
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Failed to delete user.",
+      data: error.message || error,
+    });
+  }
+};
 
 const getStudentDetailsWithSession = async (req, res) => {
   try {
@@ -1266,4 +1299,5 @@ module.exports = {
   getAllTeachers,
   changePassword,
   getAllHODs,
+  deleteUser,
 };

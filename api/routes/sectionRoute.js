@@ -7,6 +7,7 @@ const {
   getTeachersBySection,
   getStudentsBySection,
   getStudentsByTech,
+  deleteSection,
 } = require("../controller/sectionController");
 
 // POST /api/section
@@ -23,5 +24,5 @@ router.get("/:sectionId/teachers/:sessionId", getTeachersBySection);
 router.get("/:sectionId/students/:sessionId", getStudentsBySection);
 
 router.get("/:sectionId/students/:tech", getStudentsByTech);
-
+router.delete("/:sectionId", deleteSection);
 module.exports = router;
