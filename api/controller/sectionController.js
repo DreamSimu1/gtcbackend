@@ -108,6 +108,39 @@ const deleteSection = async (req, res) => {
     });
   }
 };
+// Get one section by ID
+const getSectionById = async (req, res) => {
+  const { sectionId } = req.params;
+
+  try {
+    const section = await Section.findById(sectionId).populate(
+      "hod",
+      "fullname email"
+    );
+
+    if (!section) {
+      return res.status(404).json({
+        status: "error",
+        message: "Section not found",
+        data: null,
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Section retrieved successfully.",
+      data: section,
+    });
+  } catch (error) {
+    console.error("Error retrieving section:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to retrieve section.",
+      data: error.message || error,
+    });
+  }
+};
+
 // Get all teachers in a section
 // const getTeachersBySection = async (req, res) => {
 //   try {
@@ -296,4 +329,5 @@ module.exports = {
   getStudentsBySection,
   getStudentsByTech,
   deleteSection,
+  getSectionById,
 };
