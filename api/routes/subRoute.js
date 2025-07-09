@@ -3,7 +3,7 @@ const {
   // addSessionToSubjectWithoutSession,
   createSubject,
   getSubjectsByTradeSection,
-  // deleteSubject,
+  deleteSubject,
   // getallSubject,
   // getStudentSubjects,
   // getSubjectsByClass,
@@ -28,6 +28,6 @@ router.get("/all/:tradeSectionId/:sessionId", getSubjectsByTradeSection);
 
 // router.get("/get-student-subjects", authenticateUser, getStudentSubjects);
 // router.put("/update-subject/:subjectId", updateSubject);
-// router.delete("/delete-subject/:subjectId", deleteSubject);
+router.delete("/delete-subject/:subjectId", deleteSubject);
 
 module.exports = router;

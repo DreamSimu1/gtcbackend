@@ -234,25 +234,29 @@ const getSubjectsByTradeSection = async (req, res) => {
 //   }
 // };
 
-// const deleteSubject = async (req, res) => {
-//   const { subjectId } = req.params;
+const deleteSubject = async (req, res) => {
+  const { subjectId } = req.params;
 
-//   try {
-//     const deletedSubject = await Subject.findByIdAndDelete(subjectId);
+  if (!mongoose.Types.ObjectId.isValid(subjectId)) {
+    return res.status(400).json({ error: "Invalid subject ID" });
+  }
 
-//     if (!deletedSubject) {
-//       return res.status(404).json({ error: "Subject not found" });
-//     }
+  try {
+    const deleted = await Subject.findByIdAndDelete(subjectId);
 
-//     res.status(200).json({
-//       message: "Subject deleted successfully",
-//       deletedSubject,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
+    if (!deleted) {
+      return res.status(404).json({ error: "Subject not found" });
+    }
+
+    return res.status(200).json({
+      message: "Subject deleted successfully",
+      data: deleted,
+    });
+  } catch (err) {
+    console.error("Error deleting subject:", err);
+    return res.status(500).json({ error: "Failed to delete subject" });
+  }
+};
 
 module.exports = {
   createSubject,
@@ -262,5 +266,5 @@ module.exports = {
   // getallSubject,
   // getSubjectsByClass,
   // getStudentSubjects,
-  // deleteSubject,
+  deleteSubject,
 };
