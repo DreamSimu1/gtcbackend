@@ -24,6 +24,7 @@ const {
   deleteUser,
   getAllHODs,
   updateUserProfile,
+  updateUserById,
 } = require("../controller/authController");
 const verify = require("../middlewares/verifyToken");
 const passport = require("passport");
@@ -103,6 +104,7 @@ router.get(
   }
 );
 router.put("/profile/:id", updateUserProfile);
+router.put("/user/:id", verify, updateUserById);
 
 router.delete("/delete-account", verify, deleteAccount);
 router.delete("/user/:id", deleteUser);

@@ -162,6 +162,56 @@ const registerUser = async (req, res) => {
   }
 };
 
+const updateUserById = async (req, res) => {
+  const userId = req.params.id;
+
+  const { fullname, email, phone, address, gender, birthday, photourl } =
+    req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found",
+      });
+    }
+
+    // Update fields if provided
+    if (fullname) user.fullname = fullname;
+    if (email) user.email = email;
+    if (phone) user.phone = phone;
+    if (address) user.address = address;
+    if (gender) user.gender = gender;
+    if (birthday) user.birthday = new Date(birthday);
+    if (photourl) user.photourl = photourl;
+
+    await user.save();
+
+    return res.status(200).json({
+      status: "success",
+      message: "User updated successfully",
+      data: {
+        _id: user._id,
+        fullname: user.fullname,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        gender: user.gender,
+        birthday: user.birthday,
+        photourl: user.photourl,
+      },
+    });
+  } catch (error) {
+    console.error("Error in updateUserById:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Failed to update user",
+      data: error.message,
+    });
+  }
+};
+
 const getStudentById = async (req, res) => {
   try {
     const { studentId } = req.params;
@@ -1329,4 +1379,5 @@ module.exports = {
   getAllHODs,
   deleteUser,
   getAuthenticatedUserProfile,
+  updateUserById,
 };
