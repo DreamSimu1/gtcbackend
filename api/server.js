@@ -8,6 +8,7 @@ const MongoStore = require("connect-mongo");
 const connectDB = require("./config/db2");
 
 const authRoute = require("./routes/authRoute");
+const psyRoute = require("./routes/psyRoute");
 const sessionRoute = require("./routes/sessionRoute");
 const subRoute = require("./routes/subRoute");
 const offlineRoute = require("./routes/offlineRoute");
@@ -64,6 +65,7 @@ app.use("/api/section", sectionRoute);
 app.use("/api/session", sessionRoute);
 app.use("/api/offline", offlineRoute);
 app.use("/api/subject", subRoute);
+app.use("/api/", psyRoute);
 app.use("/api/ai", aiRoute);
 
 // Use commonRouter with specific routes requiring authentication

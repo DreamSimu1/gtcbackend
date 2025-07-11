@@ -105,7 +105,6 @@ router.get(
 );
 router.put("/profile/:id", updateUserProfile);
 router.put("/user/:id", verify, updateUserById);
-
 router.delete("/delete-account", verify, deleteAccount);
 router.delete("/user/:id", deleteUser);
 
