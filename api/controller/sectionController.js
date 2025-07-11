@@ -273,7 +273,7 @@ const getStudentsBySection = async (req, res) => {
       role: "student",
       tradeSection: sectionId,
       session: sessionId,
-    }).select("fullname email phone photourl tech");
+    }).select("fullname email username phone photourl tech");
 
     res.status(200).json({
       status: "success",
