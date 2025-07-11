@@ -167,6 +167,7 @@ const updateUserById = async (req, res) => {
 
   const {
     fullname,
+    username,
     email,
     phone,
     address,
@@ -186,6 +187,7 @@ const updateUserById = async (req, res) => {
     }
 
     if (fullname) user.fullname = fullname;
+    if (username) user.username = username;
     if (email) user.email = email;
     if (phone) user.phone = phone;
     if (address) user.address = address;
@@ -205,6 +207,7 @@ const updateUserById = async (req, res) => {
       data: {
         _id: user._id,
         fullname: user.fullname,
+        username: user.username,
         email: user.email,
         phone: user.phone,
         address: user.address,

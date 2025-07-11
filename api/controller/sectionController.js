@@ -201,7 +201,7 @@ const getTeachersBySection = async (req, res) => {
       role: "teacher",
       tradeSection: sectionId,
       session: sessionId,
-    }).select("fullname email phone username photourl");
+    }).select("fullname email phone username address photourl");
 
     if (!teachers || teachers.length === 0) {
       return res.status(404).json({
