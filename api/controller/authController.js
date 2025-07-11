@@ -165,8 +165,16 @@ const registerUser = async (req, res) => {
 const updateUserById = async (req, res) => {
   const userId = req.params.id;
 
-  const { fullname, email, phone, address, gender, birthday, photourl } =
-    req.body;
+  const {
+    fullname,
+    email,
+    phone,
+    address,
+    gender,
+    birthday,
+    photourl,
+    password,
+  } = req.body;
 
   try {
     const user = await User.findById(userId);
@@ -177,7 +185,6 @@ const updateUserById = async (req, res) => {
       });
     }
 
-    // Update fields if provided
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;
     if (phone) user.phone = phone;
@@ -185,6 +192,10 @@ const updateUserById = async (req, res) => {
     if (gender) user.gender = gender;
     if (birthday) user.birthday = new Date(birthday);
     if (photourl) user.photourl = photourl;
+    if (password && password.length >= 8) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    }
 
     await user.save();
 
